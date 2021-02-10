@@ -21,5 +21,6 @@ test:
   image: registry.gitlab.com/pathway-development/docker/linux-cpp:$CI_COMMIT_REF_SLUG
   stage: test
   script:
+    - chmod +x testit.sh
     - ./testit.sh
   when: manual
