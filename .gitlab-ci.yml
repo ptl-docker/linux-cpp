@@ -21,6 +21,7 @@ test:
   image: registry.gitlab.com/pathway-development/docker/linux-cpp:$CI_COMMIT_REF_SLUG
   stage: test
   script:
-    - chmod +x testit.sh
-    - ./testit.sh
+    # Look for the Boost folders
+    - ls -l /usr/include/boost
+    - ls -l /usr/lib/
   when: manual
