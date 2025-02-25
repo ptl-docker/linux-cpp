@@ -1,15 +1,28 @@
 # Based on the official Debian image
 FROM debian:stable-slim
 
-# Install required additional packages
-RUN apt update && apt -y install build-essential g++ wget
+# Boost version to install
+ARG BOOST_MAJOR=1
+ARG BOOST_MINOR=75
+ARG BOOST_PATCH=0
+# Additional variables for convenience
+ARG BOOST_FOLDER=boost_${BOOST_MAJOR}_${BOOST_MINOR}_${BOOST_PATCH}
+ARG BOOST_TARFILE=boost_${BOOST_MAJOR}_${BOOST_MINOR}_${BOOST_PATCH}.tar.gz
 
-# Boost
-RUN wget --progress=dot:mega -O boost_1_75_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.75.0/boost_1_75_0.tar.gz/download &&\
-    tar xzf boost_1_75_0.tar.gz &&\
-    cd boost_1_75_0/ &&\
+# Install required additional packages
+RUN apt-get update && apt -y install build-essential g++ wget
+
+# Compile and install Boost
+# See https://www.boost.org/doc/libs/1_75_0/more/getting_started/unix-variants.html
+RUN wget --progress=dot:mega -O ${BOOST_TARFILE} https://sourceforge.net/projects/boost/files/boost/${BOOST_MAJOR}.${BOOST_MINOR}.${BOOST_PATCH}/${BOOST_TARFILE}/download &&\
+    tar xzf ${BOOST_TARFILE} &&\
+    cd ${BOOST_FOLDER} &&\
     ./bootstrap.sh --prefix=/usr/ --with-libraries=all --with-toolset=gcc &&\
     ./b2 toolset=gcc &&\
     ./b2 install --prefix=/usr &&\
     cd .. &&\
-    rm -rf boost_1_75_0/ && rm boost_1_75_0.tar.gz
+    rm -rf ${BOOST_FOLDER} && rm ${BOOST_TARFILE}
+
+# Check version number of installed Boost libraries
+RUN echo "*** BUILD COMPLETE ***" &&\
+    cat /usr/include/boost/version.hpp | grep "BOOST_LIB_VERSION"
