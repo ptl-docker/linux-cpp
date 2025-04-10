@@ -3,17 +3,17 @@ FROM debian:stable-slim
 
 # Boost version to install
 ARG BOOST_MAJOR=1
-ARG BOOST_MINOR=75
+ARG BOOST_MINOR=87
 ARG BOOST_PATCH=0
 # Additional variables for convenience
 ARG BOOST_FOLDER=boost_${BOOST_MAJOR}_${BOOST_MINOR}_${BOOST_PATCH}
 ARG BOOST_TARFILE=boost_${BOOST_MAJOR}_${BOOST_MINOR}_${BOOST_PATCH}.tar.gz
 
 # Install required additional packages
-RUN apt-get update && apt -y install build-essential g++ wget
+RUN apt-get update && apt-get -y install git build-essential g++ wget
 
 # Compile and install Boost
-# See https://www.boost.org/doc/libs/1_75_0/more/getting_started/unix-variants.html
+# See https://www.boost.org/doc/libs/1_87_0/more/getting_started/unix-variants.html
 RUN wget --progress=dot:mega -O ${BOOST_TARFILE} https://sourceforge.net/projects/boost/files/boost/${BOOST_MAJOR}.${BOOST_MINOR}.${BOOST_PATCH}/${BOOST_TARFILE}/download &&\
     tar xzf ${BOOST_TARFILE} &&\
     cd ${BOOST_FOLDER} &&\
@@ -23,6 +23,6 @@ RUN wget --progress=dot:mega -O ${BOOST_TARFILE} https://sourceforge.net/project
     cd .. &&\
     rm -rf ${BOOST_FOLDER} && rm ${BOOST_TARFILE}
 
-# Check version number of installed Boost libraries
-RUN echo "*** BUILD COMPLETE ***" &&\
-    cat /usr/include/boost/version.hpp | grep "BOOST_LIB_VERSION"
+# TODO: Use CMD here instead of RUN
+#RUN echo "*** BUILD COMPLETE ***" &&\
+#    cat /usr/include/boost/version.hpp | grep "BOOST_LIB_VERSION"
